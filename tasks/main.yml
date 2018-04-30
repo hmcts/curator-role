@@ -1,0 +1,38 @@
+---
+# tasks file for curator
+
+- name: add elastic curator repository
+  become: yes
+  yum_repository:
+    name: curator
+    description: CentOS/RHEL 7 repository for Elasticsearch Curator 5.x packages
+    baseurl: "{{ elk_curator_pkg_url }}"
+    gpgkey: file:///etc/pki/rpm-gpg/GPG-KEY-elasticsearch
+    gpgcheck: yes
+
+- name: install elasticsearch curator package
+  become: yes
+  yum:
+    pkg: elasticsearch-curator
+    state: installed
+
+- name: add curator configuration file
+  become: yes
+  template:
+    src: curator.yml.j2
+    dest: /root/.curator/curator.yml
+
+- name: add curator actions file
+  become: yes
+  copy:
+    content: "{{ elk_curator_actions_yml }}"
+    dest: /root/.curator/actions.yml
+  when: elk_curator_actions_yml is defined
+
+- name: add curator cron job
+  become: yes
+  cron:
+    name: curator
+    hour: 2
+    minute: 0
+    job: "/bin/curator /root/.curator/actions.yml"

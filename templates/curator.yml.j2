@@ -1,0 +1,7 @@
+---
+client:
+  hosts:
+    - "{{ elk_curator_host }}"
+  http_auth: {{ elk_es_admin_username }}:{{ elk_es_admin_password }}
+  use_ssl: True
+  ssl_no_validate: True
