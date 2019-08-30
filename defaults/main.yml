@@ -1,12 +1,22 @@
 ---
-# SearchGuard credentials for a user with suitable permissions to perform curator tasks
-elk_es_admin_username: "{{ elasticsearch_backup_username }}"
-elk_es_admin_password: "{{ elasticsearch_backup_password }}"
+elasticsearch_admin_username: "{{ elasticsearch_admin_username }}"
+elasticsearch_admin_password: "{{ elasticsearch_admin_password }}"
 
-# Defaults should be overriden for local installation
-elk_curator_host: "localhost"
-elk_curator_pkg_url: "https://packages.elastic.co/curator/5/centos/7/Packages/elasticsearch-curator-5.5.1-1.x86_64.rpm"
+elasticsearch_curator_host: "localhost"
+elasticsearch_curator_conf_dir: /etc/elasticsearch-curator
 
-# If you store your actions.yml file in an external location then reference it here so the contents can be
-# copied over in the role
-#elk_curator_actions_yml:
+elasticsearch_curator_cron_jobs:
+  - {
+    name: "Delete old elasticsearch indices.",
+    job: "/usr/local/bin/curator delete indices \
+    --older-than 30 --time-unit days --timestring '\\%Y.\\%m.\\%d'",
+    minute: 0,
+    hour: 1
+  }
+  - {
+    name: "Close old elasticsearch indices.",
+    job: "/usr/local/bin/curator close indices \
+    --older-than 14 --time-unit days --timestring '\\%Y.\\%m.\\%d'",
+    minute: 30,
+    hour: 1
+  }

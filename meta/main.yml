@@ -6,6 +6,17 @@ galaxy_info:
 
   license: MIT
 
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+
   min_ansible_version: 2.1
 
-  galaty_tags: []
+  galaxy_tags: []

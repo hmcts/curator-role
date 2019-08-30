@@ -1,0 +1,19 @@
+---
+- name: Add epel
+  yum_repository:
+    name: epel
+    description: EPEL YUM repo
+    file: external_repos
+    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+    gpgcheck: false
+
+- name: Ensure pip is installed.
+  yum:
+    name: python-pip
+    state: present
+    enablerepo: epel
+
+- name: Ensure cronie is installed.
+  yum:
+    name: cronie
+    state: present

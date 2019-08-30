@@ -1,38 +1,35 @@
 ---
-# tasks file for curator
+- include: redhat.yml
+  when: ansible_os_family == 'RedHat'
 
-- name: add elastic curator repository
-  become: yes
-  yum_repository:
-    name: curator
-    description: CentOS/RHEL 7 repository for Elasticsearch Curator 5.x packages
-    baseurl: "{{ elk_curator_pkg_url }}"
-    gpgkey: file:///etc/pki/rpm-gpg/GPG-KEY-elasticsearch
-    gpgcheck: yes
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
 
-- name: install elasticsearch curator package
-  become: yes
-  yum:
-    pkg: elasticsearch-curator
-    state: installed
+- name: Install Elasticsearch Curator and required dependencies.
+  pip:
+    name:
+      - elasticsearch-curator
+      - argparse
 
-- name: add curator configuration file
-  become: yes
+- name: Create elasticsearch-curator config dir
+  file:
+    path: "{{ elasticsearch_curator_conf_dir }}"
+    state: directory
+
+- name: Add Elasticsearch Curator configuration file.
+  become: true
   template:
     src: curator.yml.j2
-    dest: /root/.curator/curator.yml
+    dest: "{{ elasticsearch_curator_conf_dir }}/curator.yml"
 
-- name: add curator actions file
-  become: yes
-  copy:
-    content: "{{ elk_curator_actions_yml }}"
-    dest: /root/.curator/actions.yml
-  when: elk_curator_actions_yml is defined
-
-- name: add curator cron job
-  become: yes
+- name: Configure cron jobs for Elasticsearch Curator.
+  become: true
   cron:
-    name: curator
-    hour: 2
-    minute: 0
-    job: "/bin/curator /root/.curator/actions.yml"
+    name: "{{ item.name }}"
+    job: "{{ item.job }}"
+    minute: "{{ item.minute | default('*') }}"
+    hour: "{{ item.hour | default('1') }}"
+    day: "{{ item.day | default('*') }}"
+    weekday: "{{ item.weekday | default('*') }}"
+    month: "{{ item.month | default('*') }}"
+  with_items: "{{ elasticsearch_curator_cron_jobs }}"
