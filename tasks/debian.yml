@@ -1,0 +1,10 @@
+---
+- name: Ensure pip is installed.
+  apt:
+    name: python-pip
+    state: present
+
+- name: Ensure cron is installed.
+  apt:
+    name: cron
+    state: present
