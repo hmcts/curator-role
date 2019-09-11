@@ -5,4 +5,4 @@
   remote_user: "{{ elasticsearch_admin_username }}"
   gather_facts: true
   roles:
-    - curator-role
+    - curator
