@@ -1,7 +1,4 @@
 ---
-elasticsearch_admin_username: "{{ elasticsearch_admin_username }}"
-elasticsearch_admin_password: "{{ elasticsearch_admin_password }}"
-
 elasticsearch_curator_host: "localhost"
 elasticsearch_curator_conf_dir: /etc/elasticsearch-curator
 
